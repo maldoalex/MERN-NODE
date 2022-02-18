@@ -27,16 +27,16 @@ const getMomentById = (req, res, next) => {
   res.json({moment});
 };
 
-const getMomentByUserId = (req, res, next) => {
+const getMomentsByUserId = (req, res, next) => {
   const userId = req.params.uid;
-  const moment = DUMMY_MOMENTS.find(m => {
+  const moments = DUMMY_MOMENTS.filter(m => {
     return m.creator === userId;
   });
 
-  if (!moment) {
-    return next(HttpError('Could not find a moment for the provided user id.', 404));
+  if (!moments || moments.length === 0) {
+    return next(HttpError('Could not find moments for the provided user id.', 404));
   }
-  res.json({moment});
+  res.json({moments});
 };
 
 const createMoment = (req, res, next) => {
@@ -75,7 +75,7 @@ const deleteMoment = (req, res, next) => {
 };
 
 exports.getMomentById = getMomentById;
-exports.getMomentByUserId = getMomentByUserId;
+exports.getMomentsByUserId = getMomentsByUserId;
 exports.createMoment = createMoment;
 exports.updateMoment = updateMoment;
 exports.deleteMoment = deleteMoment;
