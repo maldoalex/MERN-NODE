@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.get('/:mid', momentsControllers.getMomentById);
 
-router.get('/user/:uid', momentsControllers.getMomentByUserId);
+router.get('/user/:uid', momentsControllers.getMomentsByUserId);
 
 router.post('/', momentsControllers.createMoment);
 
