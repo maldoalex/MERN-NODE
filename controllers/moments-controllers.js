@@ -1,7 +1,7 @@
 const { v4: uuidv4 } = require('uuid');
 const HttpError = require('../models/http-error');
 
-const DUMMY_MOMENTS = [
+let DUMMY_MOMENTS = [
   {
     id: 'm1',
     title: 'Empire State Building',
@@ -54,6 +54,28 @@ const createMoment = (req, res, next) => {
   res.status(201).json({moment: createdMoment});
 };
 
+const updateMoment = (req, res, next) => {
+  const {title, description} = req.body;
+  const momentId = req.params.mid;
+
+  const updatedMoment = {...DUMMY_MOMENTS.find(m => m.id === momentId)};
+  const placeIndex = DUMMY_MOMENTS.findIndex(m => m.id === momentId);
+  updatedMoment.title = title;
+  updatedMoment.description = description;
+
+  DUMMY_MOMENTS[placeIndex] = updatedMoment;
+
+  res.status(200).json({moment: updatedMoment});
+};
+
+const deleteMoment = (req, res, next) => {
+  const momentId = req.params.mid; 
+  DUMMY_MOMENTS = DUMMY_MOMENTS.filter(m => m.id !== momentId);
+  res.status(200).json({message: 'Deleted moment.'})
+};
+
 exports.getMomentById = getMomentById;
 exports.getMomentByUserId = getMomentByUserId;
 exports.createMoment = createMoment;
+exports.updateMoment = updateMoment;
+exports.deleteMoment = deleteMoment;

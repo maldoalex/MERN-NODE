@@ -12,4 +12,8 @@ router.get('/user/:uid', momentsControllers.getMomentByUserId);
 
 router.post('/', momentsControllers.createMoment);
 
+router.patch('/:mid', momentsControllers.updateMoment);
+
+router.delete('/:mid', momentsControllers.deleteMoment);
+
 module.exports = router;
