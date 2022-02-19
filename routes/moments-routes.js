@@ -1,4 +1,5 @@
 const express = require('express');
+const {check} = require('express-validator');
 
 const momentsControllers = require('../controllers/moments-controllers');
 
@@ -10,9 +11,22 @@ router.get('/:mid', momentsControllers.getMomentById);
 
 router.get('/user/:uid', momentsControllers.getMomentsByUserId);
 
-router.post('/', momentsControllers.createMoment);
+router.post(
+  '/', 
+  [
+    check('title').not().isEmpty(), 
+    check('description').isLength({min: 5}),
 
-router.patch('/:mid', momentsControllers.updateMoment);
+  ],
+  momentsControllers.createMoment);
+
+router.patch(
+  '/:mid',
+  [
+    check('title').not().isEmpty(), 
+    check('description').isLength({min: 5}),
+  ], 
+  momentsControllers.updateMoment);
 
 router.delete('/:mid', momentsControllers.deleteMoment);
 
