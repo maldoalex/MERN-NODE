@@ -1,4 +1,5 @@
 const { v4: uuidv4 } = require('uuid');
+const {validationResult} = require('express-validator');
 const HttpError = require('../models/http-error');
 
 let DUMMY_MOMENTS = [
@@ -40,6 +41,10 @@ const getMomentsByUserId = (req, res, next) => {
 };
 
 const createMoment = (req, res, next) => {
+  const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      throw new HttpError('Invalid inputs passed.', 422)
+    }
   const {title, description, coordinates, creator} = req.body;
 
   const createdMoment = {
@@ -55,6 +60,11 @@ const createMoment = (req, res, next) => {
 };
 
 const updateMoment = (req, res, next) => {
+  const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      throw new HttpError('Invalid inputs passed.', 422)
+    }
+
   const {title, description} = req.body;
   const momentId = req.params.mid;
 
