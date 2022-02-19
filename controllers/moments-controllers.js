@@ -2,6 +2,7 @@ const { v4: uuidv4 } = require('uuid');
 const {validationResult} = require('express-validator');
 const HttpError = require('../models/http-error');
 const getCoordsForAddress = require('../util/location');
+const Moment = require('../models/moment');
 
 let DUMMY_MOMENTS = [
   {
@@ -17,16 +18,22 @@ let DUMMY_MOMENTS = [
   }
 ];
 
-const getMomentById = (req, res, next) => {
+const getMomentById = async (req, res, next) => {
   const momentId = req.params.mid;
-  const moment = DUMMY_MOMENTS.find(m => {
-    return m.id === momentId;
-  });
+  let moment;
+
+  try {
+    moment = await Moment.findById(momentId);
+  } catch (err) {
+    const error = new HttpError('Something went wrong, could not find moment.', 500);
+    return next(error);
+  }
 
   if (!moment) {
-    throw new HttpError('Could not find a moment for the provided moment id.', 404);
+    const error = new HttpError('Could not find a moment for the provided moment id.', 404);
+    return next(error);
   }
-  res.json({moment});
+  res.json({moment: moment.toObject({getters: true})});
 };
 
 const getMomentsByUserId = (req, res, next) => {
@@ -56,15 +63,23 @@ const createMoment = async (req, res, next) => {
     return next(error);
   }
 
-  const createdMoment = {
-    id: uuidv4(),
+  const createdMoment = new Moment({
     title,
     description,
-    location: coordinates,
     address,
+    location: coordinates,
+    image: 'https://images.unsplash.com/photo-1519057016395-76b7690327e0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxjb2xsZWN0aW9uLXBhZ2V8NXwxNDI1MDh8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=60',
     creator
-  };
-  DUMMY_MOMENTS.push(createdMoment);
+  });
+
+  try {
+    await createdMoment.save();
+  } catch (err) {
+    const error = new HttpError(
+      'Creating moment failed, please try again.', 500
+    );
+    return next(error);
+  }
 
   res.status(201).json({moment: createdMoment});
 };
