@@ -80,6 +80,9 @@ const updateMoment = (req, res, next) => {
 
 const deleteMoment = (req, res, next) => {
   const momentId = req.params.mid; 
+  if (!DUMMY_MOMENTS.find(m => m.id === momentId)) {
+    throw new HttpError('Could not find a moment for that id.', 404);
+  }
   DUMMY_MOMENTS = DUMMY_MOMENTS.filter(m => m.id !== momentId);
   res.status(200).json({message: 'Deleted moment.'})
 };
