@@ -1,23 +1,12 @@
 const { v4: uuidv4 } = require('uuid');
 const {validationResult} = require('express-validator');
+const mongoose = require('mongoose');
+
 const HttpError = require('../models/http-error');
 const getCoordsForAddress = require('../util/location');
 const Moment = require('../models/moment');
-const moment = require('../models/moment');
+const User = require('../models/user');
 
-let DUMMY_MOMENTS = [
-  {
-    id: 'm1',
-    title: 'Empire State Building',
-    description: 'One of the most famous sky scrapers in the world!',
-    location: {
-      lat: 40.7484474,
-      lng: -73.9871516
-    },
-    address: '20 W 34th St, New York, NY 10001',
-    creator: 'u1'
-  }
-];
 
 const getMomentById = async (req, res, next) => {
   const momentId = req.params.mid;
@@ -78,8 +67,27 @@ const createMoment = async (req, res, next) => {
     creator
   });
 
+  let user;
+
   try {
-    await createdMoment.save();
+    user = await User.findById(creator); 
+  } catch (err) {
+    const error = new HttpError('Creating moment failed, please try again', 500);    
+    return next(error);
+  }
+
+  if (!user) {
+    const error = new HttpError('Could not find user for provided id', 404);
+    return next(error);
+  }
+
+  try {
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await createdMoment.save({session: sess});
+    user.moments.push(createdMoment);
+    await user.save({session:sess});
+    await sess.commitTransaction();
   } catch (err) {
     const error = new HttpError(
       'Creating moment failed, please try again.', 500
@@ -93,7 +101,7 @@ const createMoment = async (req, res, next) => {
 const updateMoment = async (req, res, next) => {
   const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      throw new HttpError('Invalid inputs passed.', 422)
+      return next(new HttpError('Invalid inputs passed.', 422));
     }
 
   const {title, description} = req.body;
@@ -129,14 +137,24 @@ const deleteMoment = async (req, res, next) => {
   let moment;
 
   try {
-    moment = await Moment.findById(momentId);
+    moment = await Moment.findById(momentId).populate('creator');
   } catch (err) {
     const error = new HttpError('Could not find moment by Id, please try again.', 500);
     return next(error);
   }
 
+  if (!moment) {
+    const error = new HttpError('Could not find moment for id', 404);
+    return next(error);
+  }
+
   try {
-    await moment.remove();
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await moment.remove(({session: sess}));
+    moment.creator.moments.pull(moment);
+    await moment.creator.save({session: sess});
+    await sess.commitTransaction();
   } catch (err) {
     const error = new HttpError(
       'Could not find moment by Id, please try again.', 500
