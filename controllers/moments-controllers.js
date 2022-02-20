@@ -3,6 +3,7 @@ const {validationResult} = require('express-validator');
 const HttpError = require('../models/http-error');
 const getCoordsForAddress = require('../util/location');
 const Moment = require('../models/moment');
+const moment = require('../models/moment');
 
 let DUMMY_MOMENTS = [
   {
@@ -36,16 +37,21 @@ const getMomentById = async (req, res, next) => {
   res.json({moment: moment.toObject({getters: true})});
 };
 
-const getMomentsByUserId = (req, res, next) => {
+const getMomentsByUserId = async (req, res, next) => {
   const userId = req.params.uid;
-  const moments = DUMMY_MOMENTS.filter(m => {
-    return m.creator === userId;
-  });
+  let moments;
+  
+  try {
+    moments = await Moment.find({creator: userId})
+  } catch (err) {
+    const error = new HttpError('Could not find moment by entered Id, please try again.', 500);
+    return next(error);
+  }
 
   if (!moments || moments.length === 0) {
-    return next(HttpError('Could not find moments for the provided user id.', 404));
+    return next(new HttpError('Could not find moments for the provided user id.', 404));
   }
-  res.json({moments});
+  res.json({moments: moments.map(moment => moment.toObject({getters: true}))});
 };
 
 const createMoment = async (req, res, next) => {
@@ -84,7 +90,7 @@ const createMoment = async (req, res, next) => {
   res.status(201).json({moment: createdMoment});
 };
 
-const updateMoment = (req, res, next) => {
+const updateMoment = async (req, res, next) => {
   const errors = validationResult(req);
     if (!errors.isEmpty()) {
       throw new HttpError('Invalid inputs passed.', 422)
@@ -93,22 +99,51 @@ const updateMoment = (req, res, next) => {
   const {title, description} = req.body;
   const momentId = req.params.mid;
 
-  const updatedMoment = {...DUMMY_MOMENTS.find(m => m.id === momentId)};
-  const placeIndex = DUMMY_MOMENTS.findIndex(m => m.id === momentId);
-  updatedMoment.title = title;
-  updatedMoment.description = description;
+  let moment;
+  try {
+    moment = await Moment.findById(momentId);
+  } catch (err) {
+    const error = new HttpError(
+      'Failed to update moment, please try again.', 500
+    );
+    return next(error);
+  }
 
-  DUMMY_MOMENTS[placeIndex] = updatedMoment;
+  moment.title = title;
+  moment.description = description;
 
-  res.status(200).json({moment: updatedMoment});
+  try {
+    await moment.save();
+  } catch (err) {
+    const error = new HttpError(
+      'Failed to update moment, please try again.', 500
+    );
+    return next(error);
+  }
+
+  res.status(200).json({moment: moment.toObject({getters: true})});
 };
 
-const deleteMoment = (req, res, next) => {
+const deleteMoment = async (req, res, next) => {
   const momentId = req.params.mid; 
-  if (!DUMMY_MOMENTS.find(m => m.id === momentId)) {
-    throw new HttpError('Could not find a moment for that id.', 404);
+  let moment;
+
+  try {
+    moment = await Moment.findById(momentId);
+  } catch (err) {
+    const error = new HttpError('Could not find moment by Id, please try again.', 500);
+    return next(error);
   }
-  DUMMY_MOMENTS = DUMMY_MOMENTS.filter(m => m.id !== momentId);
+
+  try {
+    await moment.remove();
+  } catch (err) {
+    const error = new HttpError(
+      'Could not find moment by Id, please try again.', 500
+    );
+    return next(error);
+  }
+
   res.status(200).json({message: 'Deleted moment.'})
 };
 
