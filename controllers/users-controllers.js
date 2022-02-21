@@ -52,7 +52,7 @@ const signup = async (req, res, next) => {
     name,
     email,
     password,
-    image: 'https://live.staticflickr.com/7631/26849088292_36fc52ee90_b.jpg',
+    image: 'https://d2lzb5v10mb0lj.cloudfront.net/darkhorse/downloads/desktops/berserkv1/tablet.jpg',
     moments: []
   });
 
@@ -84,7 +84,7 @@ const login = async (req, res, next) => {
     return next(error);
   }
 
-  res.json({message: 'Logged in!'});
+  res.json({message: 'Logged in!', user: existingUser.toObject({getters: true})});
 };
 
 const updateUser = (req, res, next) => {};
