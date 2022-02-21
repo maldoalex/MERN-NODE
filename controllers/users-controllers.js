@@ -1,4 +1,3 @@
-const { v4: uuidv4 } = require('uuid');
 const {validationResult} = require('express-validator');
 
 const HttpError = require('../models/http-error');
@@ -33,7 +32,7 @@ const signup = async (req, res, next) => {
     if (!errors.isEmpty()) {
       return next(new HttpError('Invalid inputs passed.', 422));
     }
-  const {userName, email, password} = req.body;
+  const {name, email, password} = req.body;
 
   let existingUser;
 
@@ -50,10 +49,10 @@ const signup = async (req, res, next) => {
   }
 
   const createdUser = new User({
-    userName,
+    name,
     email,
     password,
-    image: 'https://images.unsplash.com/photo-1547823065-4cbbb2d4d185?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OXx8bXQlMjBmdWppfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60',
+    image: 'https://live.staticflickr.com/7631/26849088292_36fc52ee90_b.jpg',
     moments: []
   });
 
