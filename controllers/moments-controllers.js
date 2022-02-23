@@ -28,19 +28,19 @@ const getMomentById = async (req, res, next) => {
 
 const getMomentsByUserId = async (req, res, next) => {
   const userId = req.params.uid;
-  let moments;
+  let userWithMoments;
   
   try {
-    moments = await Moment.find({creator: userId})
+    userWithMoments = await User.findById(userId).populate('moments');
   } catch (err) {
-    const error = new HttpError('Could not find moment by entered Id, please try again.', 500);
+    const error = new HttpError('Fetching moments failed, please try again.', 500);
     return next(error);
   }
 
-  if (!moments || moments.length === 0) {
+  if (!userWithMoments || userWithMoments.moments.length === 0) {
     return next(new HttpError('Could not find moments for the provided user id.', 404));
   }
-  res.json({moments: moments.map(moment => moment.toObject({getters: true}))});
+  res.json({moments: userWithMoments.moments.map(moment => moment.toObject({getters: true}))});
 };
 
 const createMoment = async (req, res, next) => {

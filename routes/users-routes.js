@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get('/', usersControllers.getUsers);
 
-router.get('/:uid', usersControllers.getUserById);
+// router.get('/:uid', usersControllers.getUserById);
 
 router.post(
   '/signup',
@@ -20,8 +20,8 @@ router.post(
 
 router.post('/login', usersControllers.login);
 
-router.patch('/:uid', usersControllers.updateUser);
+// router.patch('/:uid', usersControllers.updateUser);
 
-router.delete('/:uid', usersControllers.deleteUser);
+// router.delete('/:uid', usersControllers.deleteUser);
 
 module.exports = router;

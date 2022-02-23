@@ -37,7 +37,10 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect('mongodb+srv://AMWebDev:Alex0923$$$@cluster0.45883.mongodb.net/mern?retryWrites=true&w=majority')
+  .connect(
+    'mongodb+srv://AMWebDev:Alex0923$$$@cluster0.45883.mongodb.net/mern?retryWrites=true&w=majority',
+    { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true }
+  )
   .then(() => {
     app.listen(5000);
   })

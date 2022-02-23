@@ -16,16 +16,16 @@ const getUsers = async (req, res, next) => {
   res.json({users: users.map(user => user.toObject({getters: true}))});
 };
 
-const getUserById = (req, res, next) => {
-  const userId = req.params.uid;
-  const user = DUMMY_MOMENTS.find(u => {
-    return u.creator === userId
-  });
-  if (!user) {
-    throw new HttpError('Could not find a user for the provided user id.', 404);
-  }
-  res.json({user});
-};
+// const getUserById = (req, res, next) => {
+//   const userId = req.params.uid;
+//   const user = DUMMY_MOMENTS.find(u => {
+//     return u.creator === userId
+//   });
+//   if (!user) {
+//     throw new HttpError('Could not find a user for the provided user id.', 404);
+//   }
+//   res.json({user});
+// };
 
 const signup = async (req, res, next) => {
   const errors = validationResult(req);
@@ -87,13 +87,13 @@ const login = async (req, res, next) => {
   res.json({message: 'Logged in!', user: existingUser.toObject({getters: true})});
 };
 
-const updateUser = (req, res, next) => {};
+// const updateUser = (req, res, next) => {};
 
-const deleteUser = (req, res, next) => {};
+// const deleteUser = (req, res, next) => {};
 
 exports.getUsers = getUsers;
-exports.getUserById = getUserById;
+// exports.getUserById = getUserById;
 exports.signup = signup;
 exports.login = login;
-exports.updateUser = updateUser;
-exports.deleteUser = deleteUser;
+// exports.updateUser = updateUser;
+// exports.deleteUser = deleteUser;
