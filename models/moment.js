@@ -7,6 +7,10 @@ const momentSchema = new Schema({
   description: {type: String, required: true},
   image: {type: String, required: true},
   address: {type: String, required: true},
+  date: {type: String, required: true},
+  haikuone: {type: String, required: true},
+  haikutwo: {type: String, required: true},
+  haikuthree: {type: String, required: true},
   location: {
     lat: {type: Number, required: true},
     lng: {type: Number, required: true}

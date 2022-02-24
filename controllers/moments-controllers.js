@@ -48,7 +48,7 @@ const createMoment = async (req, res, next) => {
     if (!errors.isEmpty()) {
       return next(new HttpError('Invalid inputs passed.', 422));
     }
-  const {title, description, address, creator} = req.body;
+  const {title, description, address, date, haikuone, haikutwo, haikuthree, creator} = req.body;
 
   let coordinates;
 
@@ -62,6 +62,10 @@ const createMoment = async (req, res, next) => {
     title,
     description,
     address,
+    date,
+    haikuone,
+    haikutwo,
+    haikuthree,
     location: coordinates,
     image: 'https://images.unsplash.com/photo-1519057016395-76b7690327e0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxjb2xsZWN0aW9uLXBhZ2V8NXwxNDI1MDh8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=60',
     creator
