@@ -52,7 +52,7 @@ const signup = async (req, res, next) => {
     name,
     email,
     password,
-    image: 'https://d2lzb5v10mb0lj.cloudfront.net/darkhorse/downloads/desktops/berserkv1/tablet.jpg',
+    image: req.file.path,
     moments: []
   });
 

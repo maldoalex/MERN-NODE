@@ -1,3 +1,4 @@
+const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const {validationResult} = require('express-validator');
 const mongoose = require('mongoose');
@@ -67,7 +68,7 @@ const createMoment = async (req, res, next) => {
     haikutwo,
     haikuthree,
     location: coordinates,
-    image: 'https://images.unsplash.com/photo-1519057016395-76b7690327e0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxjb2xsZWN0aW9uLXBhZ2V8NXwxNDI1MDh8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=60',
+    image: req.file.path,
     creator
   });
 
@@ -152,6 +153,8 @@ const deleteMoment = async (req, res, next) => {
     return next(error);
   }
 
+  const imagePath = moment.image;
+
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
@@ -165,6 +168,10 @@ const deleteMoment = async (req, res, next) => {
     );
     return next(error);
   }
+
+  fs.unlink(imagePath, err => {
+    console.log(err);
+  });
 
   res.status(200).json({message: 'Deleted moment.'})
 };
