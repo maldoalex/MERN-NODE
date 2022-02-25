@@ -49,7 +49,7 @@ const createMoment = async (req, res, next) => {
     if (!errors.isEmpty()) {
       return next(new HttpError('Invalid inputs passed.', 422));
     }
-  const {title, description, address, date, haikuone, haikutwo, haikuthree, creator} = req.body;
+  const {title, description, address, date, haikuone, haikutwo, haikuthree} = req.body;
 
   let coordinates;
 
@@ -69,13 +69,13 @@ const createMoment = async (req, res, next) => {
     haikuthree,
     location: coordinates,
     image: req.file.path,
-    creator
+    creator: req.userData.userId
   });
 
   let user;
 
   try {
-    user = await User.findById(creator); 
+    user = await User.findById(req.userData.userId); 
   } catch (err) {
     const error = new HttpError('Creating moment failed, please try again', 500);    
     return next(error);
@@ -122,6 +122,13 @@ const updateMoment = async (req, res, next) => {
     return next(error);
   }
 
+  if (moment.creator.toString() !== req.userData.userId) {
+    const error = new HttpError(
+      'You are not allowed to edit this place.', 401
+    );
+    return next(error);
+  }
+
   moment.title = title;
   moment.description = description;
 
@@ -150,6 +157,13 @@ const deleteMoment = async (req, res, next) => {
 
   if (!moment) {
     const error = new HttpError('Could not find moment for id', 404);
+    return next(error);
+  }
+
+  if (moment.creator.id !== req.userData.userId) {
+    const error = new HttpError(
+      'You are not allowed to delete this place.', 401
+    );
     return next(error);
   }
 
