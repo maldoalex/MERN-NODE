@@ -3,6 +3,7 @@ const {check} = require('express-validator');
 
 const momentsControllers = require('../controllers/moments-controllers');
 const fileUpload = require('../middleware/file-upload');
+const checkAuth = require('../middleware/check-auth');
 
 const router = express.Router();
 
@@ -11,6 +12,8 @@ const router = express.Router();
 router.get('/:mid', momentsControllers.getMomentById);
 
 router.get('/user/:uid', momentsControllers.getMomentsByUserId);
+
+router.use(checkAuth);
 
 router.post(
   '/', 
