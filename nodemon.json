@@ -1,0 +1,9 @@
+{
+  "env": {
+    "DB_USER": "AMWebDev",
+    "DB_PASSWORD": "Alex0923$$$",
+    "DB_NAME": "mern",
+    "GOOGLE_API_KEY": "AIzaSyBW80O8dMsb1aiTi_jpUvOxl0Z8frt3T2g",
+    "JWT_KEY": "supersecret"
+  }
+}
