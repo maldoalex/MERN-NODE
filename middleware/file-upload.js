@@ -58,7 +58,7 @@ const fileUpload = multer({
     bucket: "mern-haiku-images",
     acl: "public-read",
     metadata: function (req, file, cb) {
-      cb(null, { fieldName: "testing_meta_data" });
+      cb(null, { fieldName: file.fieldname });
     },
     key: function (req, file, cb) {
       cb(null, Date.now().toString());
