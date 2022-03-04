@@ -48,8 +48,8 @@ app.use((error, req, res, next) => {
 
 mongoose
   .connect(
-    `mongodb+srv://AlexM:lonNmJZTLt55Y8wY@cluster0.45883.mongodb.net/mern?retryWrites=true&w=majority`,
-    // `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.45883.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`,
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.45883.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`,
+    // `mongodb+srv://AlexM:lonNmJZTLt55Y8wY@cluster0.45883.mongodb.net/mern?retryWrites=true&w=majority`,
     { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true }
   )
   .then(() => {

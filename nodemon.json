@@ -4,6 +4,8 @@
     "DB_PASSWORD": "lonNmJZTLt55Y8wY",
     "DB_NAME": "mern",
     "GOOGLE_API_KEY": "AIzaSyAkfPFLEK5940Nf2wiepyl9jc008tFbqSg",
-    "JWT_KEY": "supersecret"
+    "JWT_KEY": "supersecret",
+    "AWS_SECRET_ACCESS": "yrFbCGJIGPtMxVZmwu1nRO1MEVCrh4uwkCR7f8dh",
+    "AWS_ACCESS_KEY": "AKIAT6X3REPYFW2KZYWM"
   }
 }
